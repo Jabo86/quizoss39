@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulazione Concorso Operatore Socio Sanitario - Modulo 14</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            margin: 0;
+            padding: 20px;
+            color: #f0f0f0;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5em;
+            color: #ffd700;
+            text-shadow: 0 0 10px #ffd700, 0 0 20px #ffd700;
+            animation: glow 2s infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 10px #ffd700, 0 0 20px #ffd700; }
+            to { text-shadow: 0 0 20px #ffd700, 0 0 30px #ffd700; }
+        }
+
+        #timer {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 1.5em;
+            color: #00eaff;
+            text-shadow: 0 0 5px #00eaff;
+        }
+
+        .question-nav {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .question-box {
+            width: 40px;
+            height: 40px;
+            margin: 8px;
+            background: linear-gradient(45deg, #333, #555);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .question-box:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 15px #ffd700;
+        }
+
+        .question-box.answered {
+            background: linear-gradient(45deg, #ffd700, #ffaa00);
+            box-shadow: 0 0 15px #ffd700;
+        }
+
+        .question {
+            margin-bottom: 20px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .question.active {
+            display: block;
+        }
+
+        .question h3 {
+            margin: 0 0 15px 0;
+            color: #ffffff;
+            font-size: 1.6em;
+            text-shadow: 0 0 3px rgba(255, 255, 255, 0.5);
+            line-height: 1.4;
+        }
+
+        .option {
+            margin: 10px 0;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.25);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            color: #ffffff;
+            font-size: 1.2em;
+            font-weight: 500;
+        }
+
+        .option:hover {
+            background: rgba(255, 255, 255, 0.35);
+            transform: translateX(5px);
+        }
+
+        .option.correct {
+            background: linear-gradient(90deg, #00eaff, #00b8d4);
+            color: #fff;
+            box-shadow: 0 0 15px #00eaff;
+        }
+
+        .option.wrong {
+            background: linear-gradient(90deg, #ff5252, #d81b60);
+            color: #fff;
+            box-shadow: 0 0 15px #ff5252;
+        }
+
+        .lamp {
+            display: none;
+            margin-left: 15px;
+            cursor: pointer;
+            font-size: 1.5em;
+            color: #ffd700;
+            text-shadow: 0 0 10px #ffd700;
+            transition: transform 0.3s ease;
+        }
+
+        .lamp:hover {
+            transform: scale(1.2);
+        }
+
+        .explanation {
+            margin-top: 15px;
+            font-style: italic;
+            color: #f0f0f0;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+            animation: slideIn 0.5s ease;
+            font-size: 1.1em;
+            line-height: 1.5;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+        }
+
+        .nav-button {
+            padding: 12px 25px;
+            background: linear-gradient(45deg, #ffd700, #ffaa00);
+            color: #1a1a2e;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.2em;
+            box-shadow: 0 0 10px #ffd700;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .nav-button:disabled {
+            background: #666;
+            color: #ccc;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+
+        .nav-button:hover:not(:disabled) {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px #ffd700;
+        }
+
+        button#submit {
+            display: block;
+            width: 250px;
+            margin: 20px auto;
+            padding: 15px;
+            background: linear-gradient(45deg, #00eaff, #00b8d4);
+            color: #1a1a2e;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.3em;
+            box-shadow: 0 0 15px #00eaff;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        button#submit:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 25px #00eaff;
+        }
+
+        #result {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 1.8em;
+            color: #ffd700;
+            text-shadow: 0 0 10px #ffd700;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1>Simulazione Concorso Operatore Socio Sanitario - Modulo 14</h1>
+        <div class="question-nav" id="questionNav"></div>
+        <div id="timer">Tempo rimanente: <span id="time">30:00</span></div>
+        <div id="quiz"></div>
+        <div class="navigation">
+            <button class="nav-button" id="prev" disabled>⬅ Indietro</button>
+            <button class="nav-button" id="next">Avanti ➡</button>
+        </div>
+        <button id="submit">Invia Risposte</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        // Array di domande (391-420) con opzioni mescolate casualmente
+        const questions = [
+            {
+                question: "Cos’è l’anemia?",
+                options: ["Un’infiammazione della vescica", "Una riduzione dei globuli rossi o dell’emoglobina", "Un accumulo di liquido nei polmoni"],
+                correct: "Una riduzione dei globuli rossi o dell’emoglobina",
+                explanation: "L’anemia è una condizione caratterizzata da una riduzione dei globuli rossi o dell’emoglobina, con sintomi come stanchezza, pallore e dispnea. Non è un’infiammazione della vescica né un edema polmonare. Gli OSS devono monitorare il colorito, misurare i parametri vitali e segnalare sintomi come tachicardia."
+            },
+            {
+                question: "Quale è un segno tipico dell’anemia?",
+                options: ["Pallore cutaneo", "Poliuria", "Ittero"],
+                correct: "Pallore cutaneo",
+                explanation: "Il pallore cutaneo, dovuto alla ridotta ossigenazione, è un segno tipico dell’anemia. La poliuria e l’ittero non sono correlati. Gli OSS devono osservare il colorito, monitorare la stanchezza e segnalare sintomi come vertigini."
+            },
+            {
+                question: "Cos’è l’anemia falciforme?",
+                options: ["Un’infiammazione del fegato", "Una malattia genetica dei globuli rossi", "Un blocco renale"],
+                correct: "Una malattia genetica dei globuli rossi",
+                explanation: "L’anemia falciforme è una malattia genetica che causa globuli rossi a forma di falce, con sintomi come dolore e crisi vaso-occlusive. Non è un’infiammazione del fegato né un blocco renale. Gli OSS devono monitorare il dolore, garantire idratazione e segnalare crisi acute."
+            },
+            {
+                question: "Quale è un segno tipico dell’anemia falciforme?",
+                options: ["Dolore osseo", "Oliguria", "Ittero"],
+                correct: "Dolore osseo",
+                explanation: "Il dolore osseo, causato da occlusioni vascolari, è un segno tipico dell’anemia falciforme. L’oliguria e l’ittero possono essere secondari, ma non primari. Gli OSS devono somministrare analgesici se prescritti, monitorare il dolore e segnalare crisi."
+            },
+            {
+                question: "Cos’è la leucemia?",
+                options: ["Un’infiammazione della vescica", "Un tumore delle cellule del sangue", "Un accumulo di liquido nei polmoni"],
+                correct: "Un tumore delle cellule del sangue",
+                explanation: "La leucemia è un tumore delle cellule del sangue, spesso dei globuli bianchi, con sintomi come stanchezza, infezioni frequenti e lividi. Non è un’infiammazione della vescica né un edema polmonare. Gli OSS devono monitorare i segni di infezione, garantire igiene e segnalare febbre."
+            },
+            {
+                question: "Quale è un segno tipico della leucemia?",
+                options: ["Infezioni frequenti", "Poliuria", "Ittero"],
+                correct: "Infezioni frequenti",
+                explanation: "Le infezioni frequenti, dovute alla ridotta immunità, sono un segno tipico della leucemia. La poliuria e l’ittero non sono primari. Gli OSS devono utilizzare tecniche asettiche, monitorare la temperatura e segnalare segni di infezione."
+            },
+            {
+                question: "Cos’è il linfoma?",
+                options: ["Un’infiammazione del fegato", "Un tumore del sistema linfatico", "Un blocco renale"],
+                correct: "Un tumore del sistema linfatico",
+                explanation: "Il linfoma è un tumore del sistema linfatico, con sintomi come linfonodi ingrossati, febbre e sudorazione notturna. Non è un’infiammazione del fegato né un blocco renale. Gli OSS devono monitorare i linfonodi, garantire comfort e segnalare sintomi sistemici."
+            },
+            {
+                question: "Quale è un segno tipico del linfoma?",
+                options: ["Linfonodi ingrossati", "Oliguria", "Ittero"],
+                correct: "Linfonodi ingrossati",
+                explanation: "I linfonodi ingrossati, spesso indolori, sono un segno tipico del linfoma. L’oliguria e l’ittero non sono primari. Gli OSS devono palpare i linfonodi, monitorare la febbre e segnalare sintomi come perdita di peso."
+            },
+            {
+                question: "Cos’è la trombocitopenia?",
+                options: ["Un’infiammazione della vescica", "Una riduzione delle piastrine", "Un accumulo di liquido nei polmoni"],
+                correct: "Una riduzione delle piastrine",
+                explanation: "La trombocitopenia è una riduzione delle piastrine, che aumenta il rischio di sanguinamento, con sintomi come lividi e petecchie. Non è un’infiammazione della vescica né un edema polmonare. Gli OSS devono monitorare la pelle, evitare traumi e segnalare sanguinamenti."
+            },
+            {
+                question: "Quale è un segno tipico della trombocitopenia?",
+                options: ["Petecchie", "Poliuria", "Ittero"],
+                correct: "Petecchie",
+                explanation: "Le petecchie, piccole macchie emorragiche sulla pelle, sono un segno tipico della trombocitopenia. La poliuria e l’ittero non sono correlati. Gli OSS devono osservare la pelle, proteggere da lesioni e segnalare sanguinamenti anomali."
+            },
+            {
+                question: "Cos’è l’emofilia?",
+                options: ["Un’infiammazione del fegato", "Un disturbo genetico della coagulazione", "Un blocco renale"],
+                correct: "Un disturbo genetico della coagulazione",
+                explanation: "L’emofilia è un disturbo genetico che compromette la coagulazione, causando sanguinamenti prolungati, soprattutto articolari. Non è un’infiammazione del fegato né un blocco renale. Gli OSS devono evitare traumi, monitorare i sanguinamenti e segnalare emartri."
+            },
+            {
+                question: "Quale è un segno tipico dell’emofilia?",
+                options: ["Sanguinamento articolare", "Oliguria", "Ittero"],
+                correct: "Sanguinamento articolare",
+                explanation: "Il sanguinamento articolare (emartro), che causa gonfiore e dolore, è un segno tipico dell’emofilia. L’oliguria e l’ittero non sono correlati. Gli OSS devono applicare ghiaccio se prescritto, immobilizzare l’articolazione e segnalare sanguinamenti."
+            },
+            {
+                question: "Cos’è la talassemia?",
+                options: ["Un’infiammazione della vescica", "Un’anemia ereditaria", "Un accumulo di liquido nei polmoni"],
+                correct: "Un’anemia ereditaria",
+                explanation: "La talassemia è un’anemia ereditaria dovuta a difetti nella sintesi dell’emoglobina, con sintomi come stanchezza e pallore. Non è un’infiammazione della vescica né un edema polmonare. Gli OSS devono monitorare il colorito, supportare le trasfusioni e segnalare sintomi."
+            },
+            {
+                question: "Quale è un segno tipico della talassemia?",
+                options: ["Stanchezza cronica", "Poliuria", "Ittero"],
+                correct: "Stanchezza cronica",
+                explanation: "La stanchezza cronica, dovuta alla ridotta ossigenazione, è un segno tipico della talassemia. La poliuria e l’ittero possono essere secondari, ma non primari. Gli OSS devono monitorare la stanchezza, garantire il riposo e segnalare pallore."
+            },
+            {
+                question: "Cos’è la policitemia?",
+                options: ["Un’infiammazione del fegato", "Un aumento dei globuli rossi", "Un blocco renale"],
+                correct: "Un aumento dei globuli rossi",
+                explanation: "La policitemia è un aumento dei globuli rossi, che può causare iperviscosità del sangue, con sintomi come mal di testa e ipertensione. Non è un’infiammazione del fegato né un blocco renale. Gli OSS devono monitorare la pressione, garantire idratazione e segnalare sintomi."
+            },
+            {
+                question: "Cos’è l’embolia?",
+                options: ["Un’infiammazione della vescica", "Un’ostruzione di un vaso sanguigno", "Un accumulo di liquido nei polmoni"],
+                correct: "Un’ostruzione di un vaso sanguigno",
+                explanation: "L’embolia è l’ostruzione di un vaso sanguigno da parte di un embolo (es. coagulo, grasso), con sintomi variabili come dispnea o dolore. Non è un’infiammazione della vescica né un edema polmonare. Gli OSS devono segnalare sintomi acuti come dispnea e garantire ossigeno."
+            },
+            {
+                question: "Cos’è la coagulazione intravascolare disseminata (CID)?",
+                options: ["Un’infiammazione del fegato", "Un disturbo della coagulazione con sanguinamenti", "Un blocco renale"],
+                correct: "Un disturbo della coagulazione con sanguinamenti",
+                explanation: "La CID è un disturbo grave della coagulazione che causa sanguinamenti e trombosi, spesso scatenata da infezioni o traumi. Non è un’infiammazione del fegato né un blocco renale. Gli OSS devono monitorare i sanguinamenti, evitare traumi e segnalare sintomi."
+            },
+            {
+                question: "Cos’è l’ipercoagulabilità?",
+                options: ["Un’infiammazione della vescica", "Una tendenza anomala alla formazione di coaguli", "Un accumulo di liquido nei polmoni"],
+                correct: "Una tendenza anomala alla formazione di coaguli",
+                explanation: "L’ipercoagulabilità è una tendenza anomala alla formazione di coaguli, che aumenta il rischio di trombosi o embolie. Non è un’infiammazione della vescica né un edema polmonare. Gli OSS devono monitorare gonfiore o dolore, promuovere la mobilità e segnalare sintomi."
+            },
+            {
+                question: "Cos’è l’epistassi?",
+                options: ["Un’infiammazione del fegato", "Un sanguinamento nasale", "Un blocco renale"],
+                correct: "Un sanguinamento nasale",
+                explanation: "L’epistassi è un sanguinamento nasale, spesso causato da traumi, ipertensione o coagulopatie, con gravità variabile. Non è un’infiammazione del fegato né un blocco renale. Gli OSS devono comprimere il naso, inclinare la testa in avanti e segnalare epistassi persistenti."
+            },
+            {
+                question: "Quale è un segno tipico dell’epistassi?",
+                options: ["Sanguinamento dal naso", "Poliuria", "Ittero"],
+                correct: "Sanguinamento dal naso",
+                explanation: "Il sanguinamento dal naso è il segno principale dell’epistassi. La poliuria e l’ittero non sono correlati. Gli OSS devono gestire l’epistassi con compressione, evitare l’aspirazione e segnalare episodi frequenti."
+            },
+            {
+                question: "Cos’è l’emorragia gastrointestinale?",
+                options: ["Un’infiammazione della vescica", "Un sanguinamento nel tratto digerente", "Un accumulo di liquido nei polmoni"],
+                correct: "Un sanguinamento nel tratto digerente",
+                explanation: "L’emorragia gastrointestinale è un sanguinamento nel tratto digerente, spesso causato da ulcere o varici, con sintomi come melena o ematemesi. Non è un’infiammazione della vescica né un edema polmonare. Gli OSS devono monitorare le feci, misurare i parametri vitali e segnalare sanguinamenti."
+            },
+            {
+                question: "Quale è un segno tipico dell’emorragia gastrointestinale?",
+                options: ["Melena", "Oliguria", "Ittero"],
+                correct: "Melena",
+                explanation: "La melena, ovvero feci nere e catramose, è un segno tipico dell’emorragia gastrointestinale alta. L’oliguria e l’ittero non sono primari. Gli OSS devono osservare le feci, monitorare la pressione e segnalare sintomi come pallore."
+            },
+            {
+                question: "Cos’è l’ematuria?",
+                options: ["Un’infiammazione del fegato", "La presenza di sangue nelle urine", "Un blocco renale"],
+                correct: "La presenza di sangue nelle urine",
+                explanation: "L’ematuria è la presenza di sangue nelle urine, spesso causata da infezioni, calcoli o tumori. Non è un’infiammazione del fegato né un blocco renale. Gli OSS devono monitorare il colore delle urine, garantire idratazione e segnalare ematuria persistente."
+            },
+            {
+                question: "Quale è un segno tipico dell’ematuria?",
+                options: ["Urine rosse o scure", "Poliuria", "Ittero"],
+                correct: "Urine rosse o scure",
+                explanation: "Le urine rosse o scure sono un segno tipico dell’ematuria, visibile o microscopica. La poliuria e l’ittero non sono correlati. Gli OSS devono raccogliere campioni di urina, monitorare i sintomi urinari e segnalare anomalie."
+            },
+            {
+                question: "Cos’è la neutropenia?",
+                options: ["Un’infiammazione della vescica", "Una riduzione dei neutrofili", "Un accumulo di liquido nei polmoni"],
+                correct: "Una riduzione dei neutrofili",
+                explanation: "La neutropenia è una riduzione dei neutrofili, che aumenta il rischio di infezioni, spesso causata da chemioterapia o malattie autoimmuni. Non è un’infiammazione della vescica né un edema polmonare. Gli OSS devono utilizzare tecniche asettiche, monitorare la febbre e segnalare infezioni."
+            },
+            {
+                question: "Quale è un segno tipico della neutropenia?",
+                options: ["Infezioni ricorrenti", "Oliguria", "Ittero"],
+                correct: "Infezioni ricorrenti",
+                explanation: "Le infezioni ricorrenti, come febbre o ulcere orali, sono un segno tipico della neutropenia. L’oliguria e l’ittero non sono correlati. Gli OSS devono garantire igiene rigorosa, monitorare la temperatura e segnalare segni di infezione."
+            },
+            {
+                question: "Cos’è la pancitopenia?",
+                options: ["Un’infiammazione del fegato", "Una riduzione di tutte le cellule del sangue", "Un blocco renale"],
+                correct: "Una riduzione di tutte le cellule del sangue",
+                explanation: "La pancitopenia è una riduzione di globuli rossi, bianchi e piastrine, con sintomi come stanchezza, infezioni e sanguinamenti. Non è un’infiammazione del fegato né un blocco renale. Gli OSS devono monitorare i sintomi, evitare traumi e segnalare febbre o lividi."
+            },
+            {
+                question: "Cos’è la splenomegalia?",
+                options: ["Un’infiammazione della vescica", "Un ingrossamento della milza", "Un accumulo di liquido nei polmoni"],
+                correct: "Un ingrossamento della milza",
+                explanation: "La splenomegalia è un ingrossamento della milza, spesso causata da infezioni, leucemia o cirrosi, con sintomi come dolore addominale. Non è un’infiammazione della vescica né un edema polmonare. Gli OSS devono monitorare il dolore, evitare traumi addominali e segnalare sintomi."
+            },
+            {
+                question: "Cos’è l’anemia da carenza di ferro?",
+                options: ["Un’infiammazione del fegato", "Una riduzione dell’emoglobina per mancanza di ferro", "Un blocco renale"],
+                correct: "Una riduzione dell’emoglobina per mancanza di ferro",
+                explanation: "L’anemia da carenza di ferro è causata da una mancanza di ferro, con sintomi come stanchezza, pallore e unghie fragili. Non è un’infiammazione del fegato né un blocco renale. Gli OSS devono monitorare il colorito, supportare la dieta ricca di ferro e segnalare sintomi."
+            },
+            {
+                question: "Quale è un segno tipico dell’anemia da carenza di ferro?",
+                options: ["Unghie fragili", "Poliuria", "Ittero"],
+                correct: "Unghie fragili",
+                explanation: "Le unghie fragili, spesso a forma di cucchiaio, sono un segno tipico dell’anemia da carenza di ferro. La poliuria e l’ittero non sono correlati. Gli OSS devono osservare le unghie, monitorare la stanchezza e segnalare sintomi come dispnea."
+            },
+            {
+                question: "Cos’è l’anemia megaloblastica?",
+                options: ["Un’infiammazione della vescica", "Un’anemia da carenza di vitamina B12 o folati", "Un accumulo di liquido nei polmoni"],
+                correct: "Un’anemia da carenza di vitamina B12 o folati",
+                explanation: "L’anemia megaloblastica è causata da una carenza di vitamina B12 o folati, con sintomi come stanchezza e glossite. Non è un’infiammazione della vescica né un edema polmonare. Gli OSS devono monitorare i sintomi, supportare la dieta e segnalare segni neurologici."
+            },
+            {
+                question: "Quale è un segno tipico dell’anemia megaloblastica?",
+                options: ["Glossite", "Oliguria", "Ittero"],
+                correct: "Glossite",
+                explanation: "La glossite, ovvero l’infiammazione della lingua, è un segno tipico dell’anemia megaloblastica, dovuta alla carenza di B12. L’oliguria e l’ittero non sono primari. Gli OSS devono osservare la mucosa orale, monitorare la stanchezza e segnalare sintomi."
+            }
+        ];
+
+        let currentQuestion = 0;
+
+        // Carica i quadratini di navigazione
+        function loadQuestionNav() {
+            const navDiv = document.getElementById("questionNav");
+            questions.forEach((_, index) => {
+                const box = document.createElement("div");
+                box.classList.add("question-box");
+                box.textContent = index + 1;
+                box.addEventListener("click", () => {
+                    showQuestion(index);
+                });
+                navDiv.appendChild(box);
+            });
+        }
+
+        // Carica il quiz
+        function loadQuiz() {
+            const quizDiv = document.getElementById("quiz");
+            questions.forEach((q, index) => {
+                const questionDiv = document.createElement("div");
+                questionDiv.classList.add("question");
+                questionDiv.id = `question-${index}`;
+                questionDiv.innerHTML = `
+                    <h3>${index + 1}. ${q.question}</h3>
+                    ${q.options.map((opt, i) => `
+                        <div class="option" data-value="${opt}">
+                            <input type="radio" name="q${index}" value="${opt}" id="q${index}_${i}">
+                            <label for="q${index}_${i}">${opt}</label>
+                            <span class="lamp" id="lamp-${index}-${i}">💡</span>
+                        </div>
+                    `).join("")}
+                    <div class="explanation" id="exp-${index}">${q.explanation}</div>
+                `;
+                quizDiv.appendChild(questionDiv);
+
+                // Aggiungi evento per accendere il quadratino
+                const radios = questionDiv.querySelectorAll(`input[name="q${index}"]`);
+                radios.forEach(radio => {
+                    radio.addEventListener("change", () => {
+                        document.querySelectorAll(".question-box")[index].classList.add("answered");
+                    });
+                });
+            });
+            showQuestion(0); // Mostra la prima domanda
+        }
+
+        // Mostra la domanda corrente
+        function showQuestion(index) {
+            document.querySelectorAll(".question").forEach(q => q.classList.remove("active"));
+            document.getElementById(`question-${index}`).classList.add("active");
+            currentQuestion = index;
+
+            // Gestione stato pulsanti
+            document.getElementById("prev").disabled = currentQuestion === 0;
+            document.getElementById("next").disabled = currentQuestion === questions.length - 1;
+        }
+
+        // Timer (30 minuti)
+        let timeLeft = 30 * 60;
+        function startTimer() {
+            const timer = setInterval(() => {
+                timeLeft--;
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                document.getElementById("time").textContent = 
+                    `${minutes}:${seconds < 10 ? "0" + seconds : seconds}`;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    checkAnswers();
+                }
+            }, 1000);
+        }
+
+        // Controllo risposte e feedback visivo
+        function checkAnswers() {
+            let score = 0;
+            questions.forEach((q, index) => {
+                const selected = document.querySelector(`input[name="q${index}"]:checked`);
+                const options = document.querySelectorAll(`#question-${index} .option`);
+
+                options.forEach(option => {
+                    const value = option.getAttribute("data-value");
+                    if (value === q.correct) {
+                        option.classList.add("correct");
+                        const lamp = option.querySelector(".lamp");
+                        lamp.style.display = "inline";
+                        lamp.addEventListener("click", () => {
+                            const explanation = document.getElementById(`exp-${index}`);
+                            explanation.style.display = "block";
+                        });
+                    }
+                });
+
+                if (selected) {
+                    if (selected.value === q.correct) {
+                        score++;
+                    } else {
+                        selected.parentElement.classList.add("wrong");
+                    }
+                }
+            });
+
+            const resultDiv = document.getElementById("result");
+            resultDiv.textContent = `Punteggio: ${score} / ${questions.length}`;
+            document.getElementById("submit").disabled = true;
+            document.getElementById("prev").disabled = true;
+            document.getElementById("next").disabled = true;
+
+            // Disabilita i radio button dopo l'invio
+            document.querySelectorAll("input[type=radio]").forEach(radio => {
+                radio.disabled = true;
+            });
+        }
+
+        // Inizializzazione
+        window.onload = () => {
+            loadQuestionNav();
+            loadQuiz();
+            startTimer();
+
+            document.getElementById("prev").addEventListener("click", () => {
+                if (currentQuestion > 0) showQuestion(currentQuestion - 1);
+            });
+
+            document.getElementById("next").addEventListener("click", () => {
+                if (currentQuestion < questions.length - 1) showQuestion(currentQuestion + 1);
+            });
+
+            document.getElementById("submit").addEventListener("click", checkAnswers);
+        };
+    </script>
+</body>
+</html>
